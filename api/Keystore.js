@@ -13,7 +13,7 @@ function success(res, data) {
     status: 'success',
     data: data
   }
-  res.status(200).send(JSON.stringify(response))
+  res.status(200).json(response)
 }
 
 module.exports = {
