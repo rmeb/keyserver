@@ -7,7 +7,7 @@ function get_keystore(req, res) {
 
   console.log(temp)
   let ks = temp.find(ks => ks.rut === rut)
-  if (!ks || ks.password !== password) return fail(res, 'Parametros incorrectos')
+  if (!ks || ks.password !== password) return fail(res, 'Rut o clave incorrectos')
 
   success(res, ks)
 }
