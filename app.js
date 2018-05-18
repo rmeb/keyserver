@@ -8,7 +8,7 @@ console.log('Server init.')
 app.use(bodyParser.json())
 app.use(cors())
 app.get('/', (req, res) => res.send('keyserver'))
-app.post('/keystore/create', keystore.create_keystore)
+app.post('/keystore/save', keystore.save_keystore)
 app.post('/keystore/get', keystore.get_keystore)
 
 var port = process.env.PORT || 4000

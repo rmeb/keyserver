@@ -12,8 +12,9 @@ function get_keystore(req, res) {
   success(res, ks)
 }
 
-function create_keystore(req, res) {
-  console.log('create keystore', req.body)
+//TODO encrypt password
+function save_keystore(req, res) {
+  console.log('save keystore', req.body)
   var rut = req.body.rut
   var password = req.body.password
   var addresses = req.body.addresses
@@ -50,5 +51,5 @@ function error(res, msg) {
 }
 
 module.exports = {
-  get_keystore, create_keystore
+  get_keystore, save_keystore
 }
