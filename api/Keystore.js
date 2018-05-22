@@ -1,12 +1,23 @@
 const db = require('../db/Postgresql')
+const {success, fail, error} = require('../utils/Reply')
 
 const SAVE_KS = 'INSERT INTO keystore(rut, data) VALUES ($1, $2)'
 const GET_KS = "SELECT data FROM keystore WHERE rut = $1"
 
-function get_keystore(req, res) {
+/**
+* retorna el keystore en base al rut y contraseña valida
+**/
+function get(req, res) {
   console.log('get keystore', req.body)
-  let rut = req.body.rut
-  let password = req.body.password
+  let {rut, password} = req.body
+
+  if (!rut || rut.length === 0) {
+    return fail(res, 'Rut es requerido')
+  }
+
+  if (!password || password.length === 0) {
+    return fail(res, 'Password es requerido')
+  }
 
   db.query(GET_KS, [rut]).then(result => {
     console.log(result)
@@ -21,13 +32,29 @@ function get_keystore(req, res) {
   })
 }
 
+/**
+* Almacena el keystore junto con el rut y la clave encriptada
+**/
 //TODO encrypt password
-function save_keystore(req, res) {
+function save(req, res) {
   console.log('save keystore', req.body)
-  var rut = req.body.rut
-  var password = req.body.password
-  var addresses = req.body.addresses
-  var keystore = req.body.keystore
+  var {rut, password, addresses, keystore} = req.body
+  
+  if (!rut || rut.length === 0) {
+    return fail(res, 'Rut es requerido')
+  }
+
+  if (!password || password.length === 0) {
+    return fail(res, 'Password es requerido')
+  }
+
+  if (!addresses || addresses.length === 0) {
+    return fail(res, 'Addresses es requerido')
+  }
+
+  if (!keystore) {
+    return fail(res, 'keystore es requerido')
+  }
 
   var data = {
     password, addresses, keystore
@@ -42,30 +69,6 @@ function save_keystore(req, res) {
   })
 }
 
-function success(res, data) {
-  var response = {
-    status: 'success',
-    data: data
-  }
-  res.status(200).json(response)
-}
-
-function fail(res, msg) {
-  var response = {
-    status: 'fail',
-    data: msg
-  }
-  res.status(400).json(response)
-}
-
-function error(res, msg) {
-  var response = {
-    status: 'error',
-    data: msg
-  }
-  res.status(500).json(response)
-}
-
 module.exports = {
-  get_keystore, save_keystore
+  get, save
 }
