@@ -1,15 +1,24 @@
-var temp = []
+const db = require('../db/Postgresql')
+
+const SAVE_KS = 'INSERT INTO keystore(rut, data) VALUES ($1, $2)'
+const GET_KS = "SELECT data FROM keystore WHERE rut = $1"
 
 function get_keystore(req, res) {
   console.log('get keystore', req.body)
   let rut = req.body.rut
   let password = req.body.password
 
-  console.log(temp)
-  let ks = temp.find(ks => ks.rut === rut)
-  if (!ks || ks.password !== password) return fail(res, 'Rut o clave incorrectos')
-
-  success(res, ks)
+  db.query(GET_KS, [rut]).then(result => {
+    console.log(result)
+    if (result.rows.length === 0) {
+      return fail(res, 'Parametros incorrectos')
+    }
+    let data = result.rows[0].data
+    if (data.password !== password) {
+      return fail(res, 'Parametros incorrectos')
+    }
+    success(res, data)
+  })
 }
 
 //TODO encrypt password
@@ -20,10 +29,17 @@ function save_keystore(req, res) {
   var addresses = req.body.addresses
   var keystore = req.body.keystore
 
-  temp.push({
-    rut, password, addresses, keystore
+  var data = {
+    password, addresses, keystore
+  }
+
+  db.query(SAVE_KS, [rut, JSON.stringify(data)]).then(result => {
+    console.log('ks saved.')
+    success(res, 'created')
+  }).catch(err => {
+    console.error('SAVE_KS', err)
+    error(res, 'Error al guardar en el keyserver')
   })
-  success(res, 'created')
 }
 
 function success(res, data) {
