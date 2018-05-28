@@ -108,6 +108,10 @@ etag@~1.8.1:
   version "1.8.1"
   resolved "https://registry.yarnpkg.com/etag/-/etag-1.8.1.tgz#41ae2eeb65efa62268aebfea83ac7d79299b0887"
 
+express-bearer-token@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/express-bearer-token/-/express-bearer-token-2.1.1.tgz#c66ae99867fea56ef25760b9feda179f783e708d"
+
 express@^4.16.3:
   version "4.16.3"
   resolved "https://registry.yarnpkg.com/express/-/express-4.16.3.tgz#6af8a502350db3246ecc4becf6b5a34d22f7ed53"

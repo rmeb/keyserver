@@ -1,34 +1,40 @@
 const db = require('../db/Postgresql')
 const {success, fail, error} = require('../utils/Reply')
 
-const SAVE_KS = 'INSERT INTO keystore(rut, data) VALUES ($1, $2)'
-const GET_KS = "SELECT data FROM keystore WHERE rut = $1"
+const SAVE_KS = 'INSERT INTO keystore(identifier, data) VALUES ($1, $2)'
+const GET_KS = "SELECT data FROM keystore WHERE identifier = $1"
 
 /**
 * retorna el keystore en base al rut y contraseña valida
 **/
 function get(req, res) {
-  console.log('get keystore', req.body)
-  let {rut, password} = req.body
+  console.log('get keystore', req.params)
+  let id = req.params.identifier
 
-  if (!rut || rut.length === 0) {
-    return fail(res, 'Rut es requerido')
+  if (!id || id.length === 0) {
+    return fail(res, 'identifier is required')
   }
 
-  if (!password || password.length === 0) {
-    return fail(res, 'Password es requerido')
+  if (!req.token) {
+    return fail(res, 'authorization token is required')
   }
+  let token = req.token
+  console.log("token: "+ token)
 
-  db.query(GET_KS, [rut]).then(result => {
+  db.query(GET_KS, [id]).then(result => {
     console.log(result)
     if (result.rows.length === 0) {
       return fail(res, 'Parametros incorrectos')
     }
     let data = result.rows[0].data
-    if (data.password !== password) {
+    if(data.token != token){
+      console.log("bad token");
       return fail(res, 'Parametros incorrectos')
     }
     success(res, data)
+  }).catch(err => {
+    console.error('GET_KS', err)
+    error(res, 'Error al leer del keyserver')
   })
 }
 
@@ -38,29 +44,26 @@ function get(req, res) {
 //TODO encrypt password
 function save(req, res) {
   console.log('save keystore', req.body)
-  var {rut, password, addresses, keystore} = req.body
+  let id = req.params.identifier
+
+  let {keystore, token} = req.body
   
-  if (!rut || rut.length === 0) {
-    return fail(res, 'Rut es requerido')
+  if (!id || id.length === 0) {
+    return fail(res, 'identifier is required')
   }
-
-  if (!password || password.length === 0) {
-    return fail(res, 'Password es requerido')
-  }
-
-  if (!addresses || addresses.length === 0) {
-    return fail(res, 'Addresses es requerido')
-  }
-
   if (!keystore) {
     return fail(res, 'keystore es requerido')
   }
-
-  var data = {
-    password, addresses, keystore
+  if (!token || token.length === 0) {
+    return fail(res, 'identifier is required')
   }
 
-  db.query(SAVE_KS, [rut, JSON.stringify(data)]).then(result => {
+  var data = {
+    keystore,
+    token
+  }
+
+  db.query(SAVE_KS, [id, JSON.stringify(data)]).then(result => {
     console.log('ks saved.')
     success(res, 'created')
   }).catch(err => {

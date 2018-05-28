@@ -1,15 +1,21 @@
 const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
+const bearerToken = require('express-bearer-token');
 const app = express()
 const keystore = require('./api/Keystore')
+const package = require('./package.json')
 
 console.log('Server init.')
 app.use(bodyParser.json())
 app.use(cors())
-app.get('/', (req, res) => res.send('keyserver'))
-app.post('/keystore/save', keystore.save)
-app.post('/keystore/get', keystore.get)
+app.use(bearerToken());
+app.get('/', (req, res) => res.send({
+    "name": package.name, 
+    "version": package.version
+}))
+app.post('/keystore/:identifier', keystore.save)
+app.get('/keystore/:identifier', keystore.get)
 
 var port = process.env.PORT || 4000
 app.listen(port, () => console.log('Keyserver listening on port ' + port))
