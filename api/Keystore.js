@@ -31,7 +31,7 @@ function get(req, res) {
       console.log("bad token");
       return fail(res, 'Parametros incorrectos')
     }
-    success(res, data)
+    success(res, data.keystore)
   }).catch(err => {
     console.error('GET_KS', err)
     error(res, 'Error al leer del keyserver')
@@ -47,7 +47,7 @@ function save(req, res) {
   let id = req.params.identifier
 
   let {keystore, token} = req.body
-  
+
   if (!id || id.length === 0) {
     return fail(res, 'identifier is required')
   }
