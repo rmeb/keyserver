@@ -41,7 +41,6 @@ function get(req, res) {
 /**
 * Almacena el keystore junto con el rut y la clave encriptada
 **/
-//TODO encrypt password
 function save(req, res) {
   console.log('save keystore', req.body)
   let id = req.params.identifier
@@ -55,7 +54,7 @@ function save(req, res) {
     return fail(res, 'keystore es requerido')
   }
   if (!token || token.length === 0) {
-    return fail(res, 'identifier is required')
+    return fail(res, 'token is required')
   }
 
   var data = {
