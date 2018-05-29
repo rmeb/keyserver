@@ -1,4 +1,5 @@
 const db = require('../db/Postgresql')
+const logger = require('../utils/Logger')
 const {success, fail, error} = require('../utils/Reply')
 
 const SAVE_KS = 'INSERT INTO keystore(identifier, data) VALUES ($1, $2)'
@@ -8,8 +9,8 @@ const GET_KS = "SELECT data FROM keystore WHERE identifier = $1"
 * retorna el keystore en base al rut y contraseña valida
 **/
 function get(req, res) {
-  console.log('get keystore', req.params)
   let id = req.params.identifier
+  logger.info('[Keystore.get] Buscando keystore para ' + id)
 
   if (!id || id.length === 0) {
     return fail(res, 'identifier is required')
@@ -19,21 +20,22 @@ function get(req, res) {
     return fail(res, 'authorization token is required')
   }
   let token = req.token
-  console.log("token: "+ token)
+  logger.debug("[Keystore.get] token: " + token)
 
   db.query(GET_KS, [id]).then(result => {
-    console.log(result)
+    logger.debug('[Keystore.get] get_ks length ' + result.rows.length)
     if (result.rows.length === 0) {
       return fail(res, 'Parametros incorrectos')
     }
     let data = result.rows[0].data
     if(data.token != token){
-      console.log("bad token");
+      logger.error("[Keystore.get] bad token");
       return fail(res, 'Parametros incorrectos')
     }
+    logger.info('[Keystore.get] Completado')
     success(res, data.keystore)
   }).catch(err => {
-    console.error('GET_KS', err)
+    logger.error('[Keystore.get] get_ks', err)
     error(res, 'Error al leer del keyserver')
   })
 }
@@ -42,8 +44,8 @@ function get(req, res) {
 * Almacena el keystore junto con el rut y la clave encriptada
 **/
 function save(req, res) {
-  console.log('save keystore', req.body)
   let id = req.params.identifier
+  logger.info('[Keystore.save] Guardanto keystore para ' + id)
 
   let {keystore, token} = req.body
 
@@ -63,10 +65,10 @@ function save(req, res) {
   }
 
   db.query(SAVE_KS, [id, JSON.stringify(data)]).then(result => {
-    console.log('ks saved.')
+    logger.info('[Keystore.save] Guardado')
     success(res, 'created')
   }).catch(err => {
-    console.error('SAVE_KS', err)
+    logger.error('[Keystore.save] Error al guardar en el keyserver', err)
     error(res, 'Error al guardar en el keyserver')
   })
 }
