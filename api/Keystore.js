@@ -17,7 +17,7 @@ function get(req, res) {
   }
 
   if (!req.token) {
-    return fail(res, 'authorization token is required')
+    return fail(res, 'authorization token is required', 403)
   }
   let token = req.token
   logger.debug("[Keystore.get] token: " + token)
@@ -25,7 +25,7 @@ function get(req, res) {
   db.query(GET_KS, [id]).then(result => {
     logger.debug('[Keystore.get] get_ks length ' + result.rows.length)
     if (result.rows.length === 0) {
-      return fail(res, 'Parametros incorrectos')
+      return fail(res, 'Keystore no encontrado', 404)
     }
     let data = result.rows[0].data
     if(data.token != token){
@@ -35,7 +35,7 @@ function get(req, res) {
     logger.info('[Keystore.get] Completado')
     success(res, data.keystore)
   }).catch(err => {
-    logger.error('[Keystore.get] get_ks', err)
+    logger.error('[Keystore.get] ' + err.code + '::' + err.detail)
     error(res, 'Error al leer del keyserver')
   })
 }
@@ -68,7 +68,10 @@ function save(req, res) {
     logger.info('[Keystore.save] Guardado')
     success(res, 'created')
   }).catch(err => {
-    logger.error('[Keystore.save] Error al guardar en el keyserver', err)
+    logger.error('[Keystore.save] ' + err.code + '::' + err.detail)
+    if (err.code === '23505') {
+      return fail(res, 'El rut ingresado ya existe')
+    }
     error(res, 'Error al guardar en el keyserver')
   })
 }

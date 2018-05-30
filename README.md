@@ -35,7 +35,7 @@ Permite guardar un keystore protegiendolo con una token secreto
 
 `GET /keystore/<identifier>`
 
-Permite recuperar el keystore guardado 
+Permite recuperar el keystore guardado
 
 #### Header
 ```
@@ -77,13 +77,12 @@ Store a keystore
 ```
 curl -i \
   -d '{ "keystore": { "encSeed": {}, "version": 1	}, "token": "055e97f1736b6041640451d90cc209c1"}' \
-  -X POST https://keyserver-ajunge.herokuapp.com/keystore/ajunge
+  -X POST https://rx-keyserver.herokuapp.com/keystore/ajunge
 
 ```
 
 Recover a keystore
 ```
 curl -i  -H 'Authorization: Bearer 055e97f1736b6041640451d90cc209c1' \
-  -X GET https://keyserver-ajunge.herokuapp.com/ajunge
+  -X GET https://rx-keyserver.herokuapp.com/keystore/ajunge
 ```
-

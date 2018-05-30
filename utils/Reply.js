@@ -6,12 +6,12 @@ module.exports = {
     }
     res.status(200).json(response)
   },
-  fail: function(res, msg) {
+  fail: function(res, msg, code = 400) {
     var response = {
       status: 'fail',
       data: msg
     }
-    res.status(400).json(response)
+    res.status(code).json(response)
   },
   error: function(res, msg) {
     var response = {
