@@ -7,9 +7,13 @@
   "author": "Andres Santander",
   "license": "MIT",
   "dependencies": {
+    "bn.js": "^4.11.8",
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",
     "ethjs-account": "^0.1.4",
+    "ethjs-provider-signer": "^0.1.4",
+    "ethjs-query": "^0.3.8",
+    "ethjs-signer": "^0.1.1",
     "express": "^4.16.3",
     "express-bearer-token": "^2.1.1",
     "pg": "^7.4.3",

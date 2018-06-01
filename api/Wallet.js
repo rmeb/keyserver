@@ -1,23 +1,20 @@
 const logger = require('../utils/Logger')
 const {success, fail, error} = require('../utils/Reply')
 const db = require('../db/Postgresql')
-const generate = require('ethjs-account').generate
-const crypto = require('crypto')
+const eth = require('../lib/Eth')
 
 const GET_KEYS = 'SELECT * FROM wallet'
 const SAVE_KEYS = 'INSERT INTO wallet(password, keys) VALUES($1, $2)'
 
-let keys = null
-
 function init() {
   return db.query(GET_KEYS).then(result => {
     if (result.rows.length === 0) {
-      let password = crypto.randomBytes(32).toString('hex')
-      keys = generate(password)
+      let ks = eth.generateKeys()
       logger.info('[Wallet.init] llaves generadas')
-      return db.query(SAVE_KEYS, [password, JSON.stringify(keys)])
+      return db.query(SAVE_KEYS, [ks.password, JSON.stringify(ks.keys)])
     } else {
-      keys = result.rows[0].keys
+      let keys = result.rows[0].keys
+      eth.generateKeys(keys)
       return Promise.resolve()
     }
   })
@@ -31,8 +28,11 @@ function refund(req, res) {
     return fail('address is required')
   }
 
-  success(res, {
-    txHash: 'dummy'
+  eth.sendTransaction(address).then(hash => {
+    success(res, hash)
+  }).catch(e => {
+    console.log(e)
+    error(res, 'Problemas enviando eth')
   })
 }
 
