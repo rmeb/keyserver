@@ -18,7 +18,14 @@ app.get('/', (req, res) => res.send({
 }))
 app.post('/keystore/:identifier', keystore.save)
 app.get('/keystore/:identifier', keystore.get)
-app.get('/refund/:address', wallet.refund)
+
+wallet.init().then(() =>
+  app.get('/refund/:address', wallet.refund)).catch(logger.error)
+
 
 var port = process.env.PORT || 4000
 app.listen(port, () => logger.info('Keyserver listening on port ' + port))
+
+function onWalletSuccess() {
+
+}

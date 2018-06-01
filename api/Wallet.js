@@ -1,5 +1,27 @@
 const logger = require('../utils/Logger')
 const {success, fail, error} = require('../utils/Reply')
+const db = require('../db/Postgresql')
+const generate = require('ethjs-account').generate
+const crypto = require('crypto')
+
+const GET_KEYS = 'SELECT * FROM wallet'
+const SAVE_KEYS = 'INSERT INTO (password, address, privateKey, publicKey) wallet VALUES($1, $2, $3, $4)'
+
+let keys = null
+
+function init() {
+  return db.query(GET_KEYS).then(result => {
+    if (result.rows.length === 0) {
+      let password = crypto.randomBytes(32).toString('hex')
+      keys = generate(password)
+      logger.debug('llaves generadas', password, keys)
+      return db.query(SAVE_KEYS, [password, keys.address, keys.privateKey, keys.publicKey])
+    } else {
+      keys = result.rows[0]
+      return Promise.resolve()
+    }
+  })
+}
 
 function refund(req, res) {
   let address = req.params.address
@@ -15,5 +37,5 @@ function refund(req, res) {
 }
 
 module.exports = {
-  refund
+  refund, init
 }
