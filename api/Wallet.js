@@ -11,6 +11,7 @@ function refund(req, res) {
   }
 
   sendTransaction(address).then(hash => {
+    logger.info('[Wallet.refund]', hash)
     success(res, hash)
   }).catch(e => {
     console.error(e)
