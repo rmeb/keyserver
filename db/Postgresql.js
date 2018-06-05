@@ -4,7 +4,6 @@ const logger = require('../utils/Logger')
 * Definir la variable de entorno DATABASE_URL con el string de conección de postgresql
 **/
 if (!process.env.DATABASE_URL) {
-  logger.error('Variable de entorno DATABASE_URL requerida para operar con postgresql')
   throw new Error('Variable de entorno DATABASE_URL requerida para operar con postgresql.')
 }
 
