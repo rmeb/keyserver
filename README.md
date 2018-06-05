@@ -61,6 +61,27 @@ Authorization: Bearer <token that proctect keystore>
 }
 ```
 
+### Recargar fondos
+
+`GET /refund/<eth addr>`
+
+Permite cargar fondos, recarga con 0.1 ETH cada vez.
+
+#### Response
+
+| Status |     Message    |                               |
+|:------:|----------------|-------------------------------|
+| 200    | Ok.            | Fondos enviados           |
+| 400    | Bad Request    | Parameter missing or invalid  |
+| 500    | Internal Error | Internal error                |
+
+#### Response data
+```
+{
+  txHash: <txHash>
+}
+```
+
 ## Install
 ```
 yarn install
