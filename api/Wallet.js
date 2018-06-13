@@ -13,7 +13,7 @@ function refund(req, res) {
     return fail('address is required')
   }
 
-  sendTransaction(address, '1000000000000000').then(hash => {
+  sendTransaction(address, '10000000000000000').then(hash => {
     logger.info('[Wallet.refund]', hash)
     success(res, hash)
   }).catch(e => {
