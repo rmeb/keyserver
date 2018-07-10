@@ -22,7 +22,7 @@ function get(req, res) {
   let token = req.token
   logger.debug("[Keystore.get] token: " + token)
 
-  db.query(GET_KS, [id]).then(result => {
+  db.query(GET_KS, [id.toUpperCase()]).then(result => {
     logger.debug('[Keystore.get] get_ks length ' + result.rows.length)
     if (result.rows.length === 0) {
       return fail(res, 'Keystore no encontrado', 404)
@@ -64,7 +64,7 @@ function save(req, res) {
     token
   }
 
-  db.query(SAVE_KS, [id, JSON.stringify(data)]).then(result => {
+  db.query(SAVE_KS, [id.toUpperCase(), JSON.stringify(data)]).then(result => {
     logger.info('[Keystore.save] Guardado')
     success(res, 'created')
   }).catch(err => {
